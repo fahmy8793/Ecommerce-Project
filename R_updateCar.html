@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+
+</html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Car</title>
+    <link rel="stylesheet" href="style/bootstrap.min.css">
+    <link rel="stylesheet" href="style/R_style.css">
+    <!-- Firebase Compat SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-storage-compat.js"></script>
+    <!-- Firebase config -->
+    <script src="scripts/Rfirebase-config.js"></script>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="R_index.html">DashBoard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" aria-current="page" href="R_addCar.html">Add Car</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Form Section -->
+    <div class="container mt-5">
+        <h2 class="mb-4 text-center">Update Car</h2>
+        <form id="R_carForm">
+            <div class="mb-3">
+                <label for="carName" class="form-label">Car Name</label>
+                <input type="text" class="form-control" id="R_carName" required>
+            </div>
+
+            <!-- <div class="mb-3">
+                <label for="carModel" class="form-label">Car Model</label>
+                <input type="text" class="form-control" id="R_carModel" required>
+            </div> -->
+
+            <div class="mb-3">
+                <label for="pricePerDay" class="form-label">Price per Day (EP)</label>
+                <input type="text" class="form-control" id="R_pricePerDay" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="carImage" class="form-label">Car Image</label>
+                <input type="text" class="form-control" id="R_carImage">
+            </div>
+
+            <div class="mb-3">
+                <label for="description" class="form-label">Description</label>
+                <textarea class="form-control" id="R_description" rows="3"></textarea>
+            </div>
+
+            <div class="mb-3">
+                <label for="availability" class="form-label">Availability</label>
+                <select class="form-select" id="R_status">
+                    <option value="available">Available</option>
+                    <option value="not-available">Not Available</option>
+                </select>
+            </div>
+            <div class="text-center">
+                <button type="submit" class="btn btn-success w-50 px-4 py-2">Submit</button>
+            </div>
+        </form>
+    </div>
+    <script src="scripts/bootstrap.bundle.min.js"></script>
+    <script src="scripts/RupdateCar.js"></script>
+</body>
+
+</html>
