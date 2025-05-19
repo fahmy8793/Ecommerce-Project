@@ -6,5 +6,185 @@
 </head>
 <body>
     <h1>Ecommerce App Main</h1>
+
+    <script>
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  query,
+  limit,
+  getDocs,
+  startAfter,
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyB7Lw4lts6ldobMELZ0HLiuPd4WK_uirmA",
+  authDomain: "jsecommerce-9350b.firebaseapp.com",
+  projectId: "jsecommerce-9350b",
+  storageBucket: "jsecommerce-9350b.firebasestorage.app",
+  messagingSenderId: "1010783396973",
+  appId: "1:1010783396973:web:f34f9b12f4bf16c579cb64",
+  measurementId: "G-RHVY9CVE46"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getFirestore(app);
+const storage = firebase.storage();
+
+let originalArray = [];
+let selectedArray = [];
+
+// Fetch products from Firebase Firestore
+async function getProducts(lastVisible = null) {
+  try {
+    const productsRef = collection(database, "products");
+    let q = lastVisible
+      ? query(productsRef, startAfter(lastVisible), limit(9))
+      : query(productsRef, limit(9));
+
+    const querySnapshot = await getDocs(q);
+    querySnapshot.forEach((doc) => {
+      originalArray.push({ ID: doc.id, ...doc.data() });
+    });
+
+    displayProducts();
+    return {
+      lastVisible: querySnapshot.docs[querySnapshot.docs.length - 1],
+    };
+  } catch (error) {
+    console.error("Error fetching products: ", error);
+    return { lastVisible: null };
+  }
+}
+
+// Display products with selection buttons
+function displayProducts() {
+  const productsDiv = document.getElementById("products");
+  const buttonsContainer = document.getElementById("buttonsContainer");
+
+  originalArray.forEach((product, index) => {
+    const card = document.createElement("div");
+    card.className = "card";
+
+    if (product.imageUrl) {
+      const img = document.createElement("img");
+      img.src = product.imageUrl;
+      img.className = "card-img-top";
+      img.onerror = () => img.remove();
+      card.appendChild(img);
+    }
+
+    const cardBody = document.createElement("div");
+    cardBody.className = "card-body";
+
+    const title = document.createElement("h5");
+    title.className = "card-title";
+    title.textContent = product.name;
+    cardBody.appendChild(title);
+
+    const text = document.createElement("p");
+    text.className = "card-text";
+    text.textContent = `Description: ${product.Description}`;
+    cardBody.appendChild(text);
+
+    const price = document.createElement("a");
+    price.href = "#";
+    price.className = "btn btn-primary";
+    price.textContent = `${product.price} EGP`;
+    cardBody.appendChild(price);
+
+    card.appendChild(cardBody);
+    productsDiv.appendChild(card);
+
+    const button = document.createElement("button");
+    button.textContent = `Select ${product.name}`;
+    button.onclick = () => addRow(index);
+    buttonsContainer.appendChild(button);
+  });
+}
+
+// Add a row to selected items
+function addRow(index) {
+  let row = originalArray[index];
+  if (!selectedArray.includes(row)) {
+    selectedArray.push(row);
+    updateDisplay();
+  }
+}
+
+// Remove a row from selected items
+function removeRow(index) {
+  selectedArray.splice(index, 1);
+  updateDisplay();
+}
+
+// Update selected items display
+function updateDisplay() {
+  const container = document.getElementById("selectedContainer");
+  container.innerHTML = "";
+  selectedArray.forEach((row, index) => {
+    const div = document.createElement("div");
+    div.textContent = row.name;
+    const removeButton = document.createElement("button");
+    removeButton.textContent = "Remove";
+    removeButton.onclick = () => removeRow(index);
+    div.appendChild(removeButton);
+    container.appendChild(div);
+  });
+}
+
+// Upload an Image to Firebase Storage
+function UploadImage(ImgInputFieldID) {
+  const imageUpload = document.getElementById(ImgInputFieldID);
+  const file = imageUpload.files[0];
+
+  if (!file) {
+    console.log("Please select an image first");
+    return;
+  }
+
+  const storageRef = storage.ref();
+  const imageRef = storageRef.child(`images/${file.name}`);
+
+  const uploadTask = imageRef.put(file);
+
+  uploadTask.on("state_changed",
+    (snapshot) => {
+      const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+      console.log(`Uploading: ${Math.round(progress)}%`);
+    },
+    (error) => {
+      console.log(`Upload failed: ${error.message}`);
+    },
+    () => {
+      uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
+        console.log("File available at", downloadURL);
+        return downloadURL;
+      });
+    }
+  );
+}
+
+// Get Image URL from Firebase Storage
+function getImageUrlFromImagesFolder(filename) {
+  const imageRef = storage.ref().child(`images/${filename}`);
+
+  return imageRef.getDownloadURL()
+    .then((url) => {
+      return url;
+    })
+    .catch((error) => {
+      console.error("Error getting image URL:", error);
+      throw error;
+    });
+}
+
+// Load products
+getProducts().then(() => console.log("Products loaded"));
+
+
+    </script>
 </body>
 </html>
