@@ -1,86 +1,99 @@
-let RcarsList = document.getElementById("R_carList");
-let RcarsCollection = db.collection("cars");
-// get cars from firestore
-RcarsCollection.get()
+let RbooksList = document.getElementById("R_bookList");
+let RbookCollection = db.collection("cars");
+
+// Fetch books from Firestore
+RbookCollection.get()
     .then((querySnapshot) => {
         if (querySnapshot.empty) {
-            RcarsList.innerHTML = "<p class='text-center'>No cars found.</p>";
+            RbooksList.innerHTML = "<p class='text-center text-muted fs-4 fw-bold'> No books available yet.</p>";
             return;
         }
-        RcarsList.innerHTML = "";
+        RbooksList.innerHTML = "";
 
         querySnapshot.forEach(doc => {
-            // get cars 
-            let car = doc.data();
-            car.id = doc.id;
-            // create div that contain the cars
+            // Get book data
+            let book = doc.data();
+            book.id = doc.id;
+
+            // Create book container
             let Rdiv = document.createElement("div");
-            Rdiv.className = "RcarDivStyle";
-            // create the image of car
+            Rdiv.className = "RbookDivStyle shadow-lg rounded p-3 transition-all";
+
+            // Create book image
             let Rimage = document.createElement("img");
-            Rimage.src = car.url_image;
-            Rimage.className = "RcarImageStyle";
-            // create the name of the car
-            let RcarName = document.createElement("h3");
-            RcarName.textContent = car.name;
-            // create the car model
-            // let RcarModel = document.createElement("p");
-            // RcarModel.textContent = car.model;
-            // RcarModel.className = "RcarModelStyle";
-            // create the price of the car
-            let RcarPrice = document.createElement("p");
-            RcarPrice.textContent = car.pricePerDay + " EP";
-            RcarPrice.className = "RcarPriceStyle";
-            // create car status
-            let RcarStatus = document.createElement("p");
-            RcarStatus.textContent = car.status;
-            // create update button
-            let RupdateCar = document.createElement("button");
-            RupdateCar.textContent = "Update";
-            RupdateCar.className = "btn btn-primary mt-2";
-            RupdateCar.addEventListener("click", () => {
-                window.location.href = `R_updateCar.html?id=${car.id}`;
+            Rimage.src = book.url_image;
+            Rimage.className = "RbookImageStyle rounded";
+            Rimage.alt = book.name;
+
+            // Create book title
+            let RbookName = document.createElement("h3");
+            RbookName.textContent = book.name;
+            RbookName.className = "RbookModelStyle text-primary text-uppercase";
+
+            // Create book genre
+            let RbookGener = document.createElement("p");
+            RbookGener.textContent = `📖 Genre: ${book.gener}`;
+            RbookGener.className = "text-secondary fw-semibold";
+
+            // Create book price
+            let RbookPrice = document.createElement("p");
+            RbookPrice.textContent = ` ${book.price} EP`;
+            RbookPrice.className = "RbookPriceStyle fw-bold text-danger";
+
+            // Create book status
+            let RbookStatus = document.createElement("p");
+            RbookStatus.textContent = `Status: ${book.status}`;
+            RbookStatus.className = "text-success fw-bold";
+
+            // Create buttons with icons
+            let RupdateBook = document.createElement("button");
+            RupdateBook.innerHTML = "Update";
+            RupdateBook.className = "btn btn-primary mt-2 px-3 fw-bold rounded-pill";
+            RupdateBook.addEventListener("click", () => {
+                window.location.href = `R_updateBook.html?id=${book.id}`;
             });
-            // create show button
-            let RshowCar = document.createElement("button");
-            RshowCar.textContent = "Show";
-            RshowCar.className = "btn btn-info mt-2";
-            RshowCar.addEventListener("click", () => {
-                window.location.href = `R_showCar.html?id=${car.id}`;
+
+            let RshowBook = document.createElement("button");
+            RshowBook.innerHTML = "View Details";
+            RshowBook.className = "btn btn-info mt-2 px-3 fw-bold rounded-pill";
+            RshowBook.addEventListener("click", () => {
+                window.location.href = `R_showBook.html?id=${book.id}`;
             });
-            // create delete button
-            let RdeleteCar = document.createElement("button");
-            RdeleteCar.textContent = "Delete";
-            RdeleteCar.className = "btn btn-danger mt-2";
-            RdeleteCar.addEventListener("click", async () => {
-                let confirmDelete = confirm("Are you sure you want to delete " + car.name);
+
+            let RdeleteBook = document.createElement("button");
+            RdeleteBook.innerHTML = "Remove";
+            RdeleteBook.className = "btn btn-danger mt-2 px-3 fw-bold rounded-pill";
+            RdeleteBook.addEventListener("click", async () => {
+                let confirmDelete = confirm(`Are you sure you want to remove "${book.name}"?`);
                 if (!confirmDelete) return;
                 try {
-                    await db.collection("cars").doc(car.id).delete();
-                    alert("Car deleted successfully");
+                    await db.collection("cars").doc(book.id).delete();
+                    alert("Book successfully removed!");
                     Rdiv.remove();
                 } catch (error) {
-                    console.error("Error deleting car:", error);
-                    alert("Failed to delete car");
+                    console.error("Error deleting book:", error);
+                    alert("Unable to delete book");
                 }
             });
-            // create div to contain all buttons 
+
+            // Create button container
             let buttonsDiv = document.createElement("div");
-            // add all elements to div
+            buttonsDiv.className = "d-flex flex-wrap justify-content-between gap-2 mt-3";
+
+            // Append elements
             Rdiv.appendChild(Rimage);
-            Rdiv.appendChild(RcarName);
-            // Rdiv.appendChild(RcarModel);
-            Rdiv.appendChild(RcarPrice);
-            Rdiv.appendChild(RcarStatus);
-            buttonsDiv.appendChild(RupdateCar);
-            buttonsDiv.appendChild(RshowCar);
-            buttonsDiv.appendChild(RdeleteCar);
-            // add the div with it's elements to the main div
+            Rdiv.appendChild(RbookName);
+            Rdiv.appendChild(RbookGener);
+            Rdiv.appendChild(RbookPrice);
+            Rdiv.appendChild(RbookStatus);
+            buttonsDiv.appendChild(RupdateBook);
+            buttonsDiv.appendChild(RshowBook);
+            buttonsDiv.appendChild(RdeleteBook);
             Rdiv.appendChild(buttonsDiv);
-            RcarsList.appendChild(Rdiv);
+            RbooksList.appendChild(Rdiv);
         });
     })
     .catch(err => {
-        console.error("faild to get cars", err);
-        RcarsList.innerHTML = "<p class='text-danger text-center'>failed to load cars</p>";
+        console.error("Failed to get books:", err);
+        RbooksList.innerHTML = "<p class='text-danger text-center fw-bold fs-5'>Error loading books.</p>";
     });
