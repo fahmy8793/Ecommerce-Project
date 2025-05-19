@@ -1,86 +1,86 @@
-let RcarsList = document.getElementById("R_carList");
-let RcarsCollection = db.collection("cars");
+let RbooksList = document.getElementById("R_bookList");
+let RbookCollection = db.collection("cars");
 // get cars from firestore
-RcarsCollection.get()
+RbookCollection.get()
     .then((querySnapshot) => {
         if (querySnapshot.empty) {
-            RcarsList.innerHTML = "<p class='text-center'>No cars found.</p>";
+            RbooksList.innerHTML = "<p class='text-center'>No books found.</p>";
             return;
         }
-        RcarsList.innerHTML = "";
+        RbooksList.innerHTML = "";
 
         querySnapshot.forEach(doc => {
             // get cars 
-            let car = doc.data();
-            car.id = doc.id;
+            let book = doc.data();
+            book.id = doc.id;
             // create div that contain the cars
             let Rdiv = document.createElement("div");
-            Rdiv.className = "RcarDivStyle";
+            Rdiv.className = "RbookDivStyle";
             // create the image of car
             let Rimage = document.createElement("img");
-            Rimage.src = car.url_image;
-            Rimage.className = "RcarImageStyle";
+            Rimage.src = book.url_image;
+            Rimage.className = "RbookImageStyle";
             // create the name of the car
-            let RcarName = document.createElement("h3");
-            RcarName.textContent = car.name;
-            // create the car model
-            // let RcarModel = document.createElement("p");
-            // RcarModel.textContent = car.model;
-            // RcarModel.className = "RcarModelStyle";
+            let RbookName = document.createElement("h3");
+            RbookName.textContent = book.name;
+            // create the book gener
+            let RbookGener = document.createElement("p");
+            RbookGener.textContent = book.gener;
+            RbookGener.className = "RbookGenerStyle";
             // create the price of the car
-            let RcarPrice = document.createElement("p");
-            RcarPrice.textContent = car.pricePerDay + " EP";
-            RcarPrice.className = "RcarPriceStyle";
+            let RbookPrice = document.createElement("p");
+            RbookPrice.textContent = book.price + " EP";
+            RbookPrice.className = "RbookPriceStyle";
             // create car status
-            let RcarStatus = document.createElement("p");
-            RcarStatus.textContent = car.status;
+            let RbookStatus = document.createElement("p");
+            RbookStatus.textContent = book.status;
             // create update button
-            let RupdateCar = document.createElement("button");
-            RupdateCar.textContent = "Update";
-            RupdateCar.className = "btn btn-primary mt-2";
-            RupdateCar.addEventListener("click", () => {
-                window.location.href = `R_updateCar.html?id=${car.id}`;
+            let RupdateBook = document.createElement("button");
+            RupdateBook.textContent = "Update";
+            RupdateBook.className = "btn btn-primary mt-2";
+            RupdateBook.addEventListener("click", () => {
+                window.location.href = `R_updateBook.html?id=${book.id}`;
             });
             // create show button
-            let RshowCar = document.createElement("button");
-            RshowCar.textContent = "Show";
-            RshowCar.className = "btn btn-info mt-2";
-            RshowCar.addEventListener("click", () => {
-                window.location.href = `R_showCar.html?id=${car.id}`;
+            let RshowBook = document.createElement("button");
+            RshowBook.textContent = "Show";
+            RshowBook.className = "btn btn-info mt-2";
+            RshowBook.addEventListener("click", () => {
+                window.location.href = `R_showBook.html?id=${book.id}`;
             });
             // create delete button
-            let RdeleteCar = document.createElement("button");
-            RdeleteCar.textContent = "Delete";
-            RdeleteCar.className = "btn btn-danger mt-2";
-            RdeleteCar.addEventListener("click", async () => {
-                let confirmDelete = confirm("Are you sure you want to delete " + car.name);
+            let RdeleteBook = document.createElement("button");
+            RdeleteBook.textContent = "Delete";
+            RdeleteBook.className = "btn btn-danger mt-2";
+            RdeleteBook.addEventListener("click", async () => {
+                let confirmDelete = confirm("Are you sure you want to delete " + book.name);
                 if (!confirmDelete) return;
                 try {
-                    await db.collection("cars").doc(car.id).delete();
-                    alert("Car deleted successfully");
+                    await db.collection("cars").doc(book.id).delete();
+                    alert("Book deleted successfully");
                     Rdiv.remove();
                 } catch (error) {
-                    console.error("Error deleting car:", error);
-                    alert("Failed to delete car");
+                    console.error("Error deleting book:", error);
+                    alert("Failed to delete book");
                 }
             });
             // create div to contain all buttons 
             let buttonsDiv = document.createElement("div");
             // add all elements to div
             Rdiv.appendChild(Rimage);
-            Rdiv.appendChild(RcarName);
-            // Rdiv.appendChild(RcarModel);
-            Rdiv.appendChild(RcarPrice);
-            Rdiv.appendChild(RcarStatus);
-            buttonsDiv.appendChild(RupdateCar);
-            buttonsDiv.appendChild(RshowCar);
-            buttonsDiv.appendChild(RdeleteCar);
+            Rdiv.appendChild(RbookName);
+            Rdiv.appendChild(RbookGener);
+            Rdiv.appendChild(RbookPrice);
+            Rdiv.appendChild(RbookStatus);
+            buttonsDiv.appendChild(RupdateBook);
+            buttonsDiv.appendChild(RshowBook);
+            buttonsDiv.appendChild(RdeleteBook);
             // add the div with it's elements to the main div
             Rdiv.appendChild(buttonsDiv);
-            RcarsList.appendChild(Rdiv);
+            RbooksList.appendChild(Rdiv);
         });
     })
     .catch(err => {
-        console.error("faild to get cars", err);
-        RcarsList.innerHTML = "<p class='text-danger text-center'>failed to load cars</p>";
+        console.error("faild to get books", err);
+        RbooksList.innerHTML = "<p class='text-danger text-center'>failed to load books</p>";
     });
